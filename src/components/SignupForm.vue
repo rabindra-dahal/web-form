@@ -1,11 +1,12 @@
 <template>
-  <form>
+  <form @submit.prevent="handleSubmit"> 
       <label for="email">Email:</label>
       <input type="email" v-model="email" name="email" id="email" required />
       
       <label for="password">Password:</label>
       <input type="password" v-model="password" name="password" id="password" required />
-      
+      <div v-if="passwordError" class="error">{{ passwordError }}</div>
+
       <label for="role">Role</label>
       <select v-model="role" name="role" id="role">
           <option value="developer"> Web Developer</option>
@@ -14,12 +15,15 @@
       <label for="tempskill"></label>
       <input type="text" name="tempskill" id="tempskill" v-model="tempSkill" @keyup.alt="addSkill" />
       <div v-for="skill in skills" :key="skill" class="skill">
-       {{skill}}
+       <span @click="deleteSkill(skill)">{{skill}} </span>
       </div>
 
       <div class="terms">
           <input type="checkbox" name="term" id="term" v-model="terms" required />
           <label for="term">Accept terms and conditions</label>
+      </div>
+      <div class="submit">
+          <button>Create an account</button>
       </div>
 
       
@@ -40,7 +44,8 @@ export default {
             role: 'designer',
             terms: false,
             tempSkill: '',
-            skills: []
+            skills: [],
+            passwordError: '',
         }
     },
     methods: {
@@ -51,7 +56,28 @@ export default {
                 }
                 this.tempSkill = ''
             }
-        }
+        },
+        deleteSkill(skill){
+            this.skills = this.skills.filter((item)=>{
+                return skill !== item
+            })
+
+        },
+        handleSubmit(){
+            console.log("form submitted")
+            //validate password
+            this.passwordError = this.password.length > 5 ? 
+            '' : 'Password must be at least 6 chars long'
+
+            if(!this.passwordError){
+                console.log('email: ',this.email)
+                console.log('password: ',this.password)
+                console.log('role: ',this.role)
+                console.log('skills: ',this.skills)
+                console.log('terms accepted: ',this.terms)
+            }
+
+        },
     },
 
 }
@@ -91,6 +117,37 @@ input[type="checkbox"]{
     margin: 0 10px 0 0;
     position: relative;
     top: 2px;
+}
+
+.skill{
+    display: inline-block;
+    margin: 20px 10px 0 0;
+    padding: 6px 12px;
+    background: #eee;
+    border-radius: 20px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    font-weight: bold;
+    color: #777;
+    cursor: pointer;
+}
+button{
+    background: #0b6dff;
+    border: 0;
+    padding: 10px 20px;
+    margin-top: 20px;
+    color: whitesmoke;
+    border-radius: 20px;
+}
+.submit{
+    text-align: center;
+}
+
+.error{
+    color: #ff0062;
+    margin-top: 10px;
+    font-size: 0.8em;
+    font-weight: bold;
 }
 
 </style>
